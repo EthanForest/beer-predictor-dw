@@ -38,14 +38,6 @@ try:
     style_avg = pd.read_sql_query(query, engine)
     st.info(" Datos de estilos cargados desde la base de datos local.")
 
-except Exception as e:
-    # Si no hay base, usar CSV
-    if os.path.exists("style_avg.csv"):
-        style_avg = pd.read_csv("style_avg.csv")
-        st.warning("Base de datos no disponible, se usará 'style_avg.csv'.")
-    else:
-        st.error("No se pudo conectar a la base ni encontrar 'style_avg.csv'.")
-        st.stop()
 
 style_mean = dict(zip(style_avg["beer_style"], style_avg["avg_overall"]))
 global_mean = style_avg["avg_overall"].mean()
