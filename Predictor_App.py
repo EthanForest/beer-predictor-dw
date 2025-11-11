@@ -9,14 +9,9 @@ warnings.filterwarnings("ignore", category=UserWarning)
 st.set_page_config(page_title="Beer Rating Predictor", page_icon="🍺")
 
 st.title("Predictor de Calificación de Cerveza")
-st.markdown("Predice la calificación general (*review_overall*) de una cerveza según sus características.")
+st.markdown("Predice la calificación general (*review_overall*) de una cerveza según sus características sensoriales.")
 
-try:
-    pipeline = joblib.load("beer_rating_model.pkl")
-    st.success("Modelo cargado correctamente.")
-except Exception as e:
-    st.error(f"Error al cargar el modelo: {e}")
-    st.stop()
+pipeline = joblib.load("beer_rating_model.pkl")
 
 style_avg = None
 
@@ -34,26 +29,25 @@ try:
     GROUP BY b.beer_style
     ORDER BY b.beer_style;
     """
-
     style_avg = pd.read_sql_query(query, engine)
-    st.info(" Datos de estilos cargados desde la base de datos local.")
 
+except:
+    if os.path.exists("style_avg.csv"):
+        style_avg = pd.read_csv("style_avg.csv")
+    else:
+        st.error("No se encontró la base de datos ni el archivo 'style_avg.csv'.")
+        st.stop()
 
 style_mean = dict(zip(style_avg["beer_style"], style_avg["avg_overall"]))
 global_mean = style_avg["avg_overall"].mean()
 
-beer_style = st.selectbox(
-    "Estilo de la cerveza:",
-    options=sorted(style_mean.keys())
-)
-
+beer_style = st.selectbox("Estilo de la cerveza:", options=sorted(style_mean.keys()))
 beer_abv = st.number_input("ABV (%)", min_value=0.0, max_value=20.0, value=5.0)
 review_aroma = st.slider("Aroma (0-5)", 0.0, 5.0, 4.0)
 review_taste = st.slider("Sabor (0-5)", 0.0, 5.0, 4.0)
 review_palate = st.slider("Paladar (0-5)", 0.0, 5.0, 4.0)
 
-if st.button("Predecir calificación general"):
-
+if st.button(" Predecir calificación general"):
     style_te_value = style_mean.get(beer_style, global_mean)
     review_appearance = (review_aroma + review_taste + review_palate) / 3
 
@@ -67,11 +61,10 @@ if st.button("Predecir calificación general"):
     }])
 
     new_beer = new_beer[pipeline.named_steps['preprocessor'].feature_names_in_]
-
     predicted_overall = round(pipeline.predict(new_beer)[0], 2)
 
-    st.success(f" Calificación estimada para '{beer_style}': **{predicted_overall} / 5.0**")
-
+    st.success(f"🍻 Calificación estimada para '{beer_style}': **{predicted_overall} / 5.0**")
     st.balloons()
+
 
 
