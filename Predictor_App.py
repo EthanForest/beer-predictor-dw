@@ -6,7 +6,7 @@ import os
 import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning)
-st.set_page_config(page_title="Beer Rating Predictor", page_icon="🍺")
+st.set_page_config(page_title="Modelo Predictivo", page_icon="🍺")
 
 st.title("Predictor de Calificación de Cerveza")
 st.markdown("Predice la calificación general (*review_overall*) de una cerveza según sus características sensoriales.")
