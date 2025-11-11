@@ -63,8 +63,7 @@ if st.button(" Predecir calificación general"):
     new_beer = new_beer[pipeline.named_steps['preprocessor'].feature_names_in_]
     predicted_overall = round(pipeline.predict(new_beer)[0], 2)
 
-    st.success(f"🍻 Calificación estimada para '{beer_style}': **{predicted_overall} / 5.0**")
-    st.balloons()
+    st.success(f" Calificación estimada para '{beer_style}': **{predicted_overall} / 5.0**")
 
 
 
